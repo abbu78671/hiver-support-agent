@@ -1,0 +1,250 @@
+{
+  "disclosure": "Judge is phi3:mini. Labels are LLM pseudo-labels. Scores reflect LLM self-agreement, not human judgment.",
+  "sample_size": 30,
+  "valid_scores": 30,
+  "failed_scores": 0,
+  "mean_score": 2.83,
+  "median_score": 3.0,
+  "individual": [
+    {
+      "row_id": 153,
+      "message": "in a future app update can you add a way to put songs in your playlist by number please. That would ",
+      "reply": "Hey! We're always looking for ways to improve our service, so suggest it on https://t.co/k3XZybF2GJ and we\u2019ll pass your feedback along /BH\n\n---\n\nCUSTO",
+      "true_intent": "GENERAL_ENQUIRY",
+      "score": 3,
+      "raw_judge": "3 - The support reply is polite and acknowledges the customer's suggestion, but it lacks direct engagement or immediate assistance for their request within this interaction. It also redirects them instead of providing a solution right away. However, since they are asked to submit feedback through an external link which could lead to quicker resolution in future updates, I consider it acceptable overall."
+    },
+    {
+      "row_id": 30,
+      "message": "Spotify is down and I need music",
+      "reply": "Hey there! We're here to help - can you tell me what device you\u2019re using? Thanks for reaching out /FR",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 6,
+      "message": "Spotify should add a category of your downloaded music",
+      "reply": "Hey, we love hearing from you and will pass on this suggestion to our team! More info here: https://t.co/JxZ8V3Qh2C /TB",
+      "true_intent": "GENERAL_ENQUIRY",
+      "score": 4,
+      "raw_judge": "4"
+    },
+    {
+      "row_id": 177,
+      "message": "how come my Spotify keeps pausing/unpausing when I\u2019m trying to listen to stuff? Version 8.4.27.895 (",
+      "reply": "Hey, we're here for you! Could you tell us more about the issue and your device details so we can assist better? /MJ\n\n---\n\nCUSTOMER INTENT: APP_TECHNI",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 3,
+      "raw_judge": "3 - The support reply is polite and acknowledges the customer's issue, but it doesn't provide immediate help or troubleshooting steps which might be expected in this context. It also asks for additional information without first suggesting common solutions that could quickly resolve potential issues with app glitches on Spotify version 8.4.27.895."
+    },
+    {
+      "row_id": 69,
+      "message": "Hi! Spotify keeps skipping when connected to my car\u2019s Bluetooth. Prius Prime/iPhone 7/iOS 11.1. Spot",
+      "reply": "Got it, can you try restarting your phone and see if that helps with the skipping issue? /DV",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 60,
+      "message": "hi, can someone please tell me why my offline music is undownloaded on a frequent basis?",
+      "reply": "Hey! Can you follow the steps under \u201cDownloads unexpectedly removed\u201d here for guidance: https://t.co/XpxqnLhytY ? Thanks /HR\n\n---\n\nCUSTOMER INTENT: PL",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 3,
+      "raw_judge": "3 - The response is neutral and provides direction without directly addressing the playback issue, but it does offer help which could be relevant if related steps are included in that link."
+    },
+    {
+      "row_id": 55,
+      "message": "Imported my music from Groove, Successful on Windows 10 and phone. not successful on Xbox1. Tried to",
+      "reply": "Hey there! We're here for you every step of the way. Just hit us up with a tweet if anything else comes up /BM\n\n---\n\nCUSTOMER INTENT: APP_USAGE\n\nEXAMP",
+      "true_intent": "APP_TECHNICAL",
+      "score": 3,
+      "raw_judge": "3 - The reply is polite and offers an alternative method of communication, but it lacks specific information about the issue or next steps for resolution regarding importing music on Xbox One. It's not poor, yet there are areas to improve in terms of helpfulness and completeness."
+    },
+    {
+      "row_id": 36,
+      "message": "This is the Spotify app on a MacBook running Sierra. I believe I am running the most updated version",
+      "reply": "Hi! Does restarting your device help with the issue? Keep us posted /NY\n\nSpotifyCares Reply to Customer Message (App_Technical): Hi there! If Spotify ",
+      "true_intent": "APP_TECHNICAL",
+      "score": 3,
+      "raw_judge": "3 - The reply is polite and acknowledges the customer\u2019 end of their issue but lacks specific troubleshooting steps or further assistance which could have been helpful for future reference if issues arise again. It's not poor, as it does offer a simple solution (restart), yet doesn't go beyond that to ensure resolution or provide additional support options."
+    },
+    {
+      "row_id": 195,
+      "message": "why does my downloaded songs keep undownloading? Super annoying",
+      "reply": "Hey, sorry for the hassle! Please follow this guide at https://t.co/38J7tFlIBF to see if it resolves your issue /NZ",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 27,
+      "message": "i hope you can include different color schemes or skins in your next update \ud83d\ude42",
+      "reply": "Hey! We're always looking to improve, so we\u2019ll pass along this feedback. Thanks for reaching out /NQ\n\n---\n\nCUSTOMER INTENT: APP_USAGE\n\nEXAMPLES:\n\nExam",
+      "true_intent": "GENERAL_ENQUIRY",
+      "score": 3,
+      "raw_judge": "3 - The reply is polite and acknowledges the customer's feedback, but it lacks specific details or commitments which might have made it more satisfying for an inquiry about app features like color schemes or skins. It also doesn't directly address how this request will be implemented in future updates."
+    },
+    {
+      "row_id": 164,
+      "message": "The search feature is all sorts of screwed up right now @115888",
+      "reply": "Hey there! What seems to be the issue with your search? Let's get this sorted out together. /JL",
+      "true_intent": "APP_TECHNICAL",
+      "score": 4,
+      "raw_judge": "4"
+    },
+    {
+      "row_id": 126,
+      "message": "When will be available Spotify in Romania? Thank's",
+      "reply": "Hey! We can\u2019t currently offer Spotify services in Romania, but we are expanding worldwide. Sign up here to hear when it might happen for you: https://",
+      "true_intent": "GENERAL_ENQUIRY",
+      "score": 3,
+      "raw_judge": "3 - The response is polite and provides the customer information about Spotify's availability in Romania, along with an alternative action (signing up for updates). However, it lacks empathy towards disappointment and does not offer a direct solution or workaround. It could be improved by acknowledging their feelings more explicitly."
+    },
+    {
+      "row_id": 25,
+      "message": "why? Why Is #reputation not available yet? Like, I HAVE BEEN WAITING THIS ALBUM TO RELEASE SINCE LIK",
+      "reply": "Hey! Taylor Swift's 'Reputation' isn't available to stream just yet \u2013 stay tuned! For now, check out the singles here https://t.co/3h0TnPWP0c /JL",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 4,
+      "raw_judge": "4"
+    },
+    {
+      "row_id": 139,
+      "message": "can we access other playlists besides the one we were given?",
+      "reply": "Hey there! You might try sharing to Tumblr or another platform. Let us know how it goes /BH\n\n**SpotifyCares Reply (Example-based):** Hey, you can shar",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 4,
+      "raw_judge": "4"
+    },
+    {
+      "row_id": 101,
+      "message": "Does anyone else the issue with @116130, where about once a month, your entire offline library gets ",
+      "reply": "Hey Taylor! Sorry to hear that. Please follow these steps for \"Downloads unexpectedly removed\" at https://t.co/7Xk9mFjGlE and let us know how it goes ",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 8,
+      "message": "hey it\u2019s me, ur neighborhood bird. im on my pc using the Comedy Central website to stream aaaaaaall ",
+      "reply": "Hey there! We're always here for your laughter fix. If you need anything else from us while streaming, just let us know. Enjoy the giggles and we\u2019ll b",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 3,
+      "raw_judge": "3 - The response is polite and acknowledges the customer' end goal, but it lacks specificity regarding how Comedy Central can assist further or enhance their streaming experience directly related to bird-watching content on our platform if that was a service we offered. It also doesn\u2019t address any potential issues with accessibility or device compatibility which might be relevant for the customer's needs"
+    },
+    {
+      "row_id": 196,
+      "message": "I am not able to delete your https://t.co/9xVdxsJOWR I am in control not you #Spotify #moneyfornothi",
+      "reply": "Hey there! We're here to help with Spotify-related issues, but we can\u2019t assist directly. Please reach out through the proper channels for support /KT\n",
+      "true_intent": "SUB_BILLING",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 175,
+      "message": "please stop playing SUGGESTED MUSIC on your app! I can't listen to this album in peace! I'd rather h",
+      "reply": "Hey there, Suggested Tracks are part of our Free service. More info here: https://t.co/Uv9kyGcsCc /SY",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 54,
+      "message": "Hi @SpotifyCares Having issues with albums that have been downloaded to listen offline. On numerous ",
+      "reply": "Hey there! We're sorry for any inconvenience caused. Please follow these steps under \u201cDownloads unexpectedly removed\u201d at https://t.co/38J7tFlIBF to se",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 58,
+      "message": "I'm having issues syncing my devices. It's often taking hours before changes are synced across from ",
+      "reply": "We understand how important it is for your listening experience to be seamless. Could you please provide the specific device models and operating syst",
+      "true_intent": "APP_TECHNICAL",
+      "score": 3,
+      "raw_judge": "3 - The response is polite, acknowledges the importance of syncing issues for user experience and asks relevant questions without being dismissive or overly technical which might confuse non-technical users. However, it lacks immediate troubleshooting steps that could help resolve urgent concerns quickly."
+    },
+    {
+      "row_id": 116,
+      "message": "I can\u2019t see the song playing also can\u2019t skip it https://t.co/O8B12ZpdAC",
+      "reply": "Thanks for reaching out! Could you try refreshing your app and checking if that resolves the issue? /JK\n\n---\n\nCUSTOMER INTENT: PASSWORD_RESET\n\nEXAMPLE",
+      "true_intent": "PLAYBACK_ISSUE",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 143,
+      "message": "I deleted the app and downloaded it back #allgood! Thanks",
+      "reply": "Great to hear you're all set now, happy listening! If anything else comes up, hit us up. https://t.co/7JxZPQg5Hr \ud83d\ude0a /KL",
+      "true_intent": "GENERAL_ENQUIRY",
+      "score": 4,
+      "raw_judge": "4"
+    },
+    {
+      "row_id": 167,
+      "message": "what do I have to do to get Boy Hangover by Lester Lewis and Bonnie McKee on streaming?! \ud83d\ude2d\ud83d\udc94 #imperat",
+      "reply": "Hey there, we're here for you. Let\u2019s find that track together \u2013 can I help guide you to it or check if your library has the song? /JO",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 3,
+      "raw_judge": "3 - The response is polite and offers assistance, but lacks specific information about how to access \"Boy Hangover\" on streaming platforms which the customer might be looking for. It's acceptable as a start but not excellent in this context."
+    },
+    {
+      "row_id": 132,
+      "message": "Hi! I am currently using a Galaxy S6 edge+ and vERSION 8.4.26.770 ARMv7. I updated the app not too l",
+      "reply": "Thanks! Could you try logging out &gt; restarting your device &gt; logging back in? Let us know how it goes /KL",
+      "true_intent": "APP_TECHNICAL",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 52,
+      "message": "No it doesn't. Have also already performed clean install of spotify.",
+      "reply": "Hmm, that seems strange! Could we try restarting your router? Let us know if the issue persists afterward. /MT",
+      "true_intent": "APP_TECHNICAL",
+      "score": 2,
+      "raw_judge": "2"
+    },
+    {
+      "row_id": 176,
+      "message": ".@115888's \"recently played artists\" is such total bs. I listened to about 15 seconds of a Cardi B s",
+      "reply": "Hey, we understand your frustration! Please let us know if there\u2019s anything specific you want changed in the \"Recently Played Artists\" section. /JE",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 3,
+      "raw_judge": "3 - The response is polite and offers an actionable solution, but it lacks empathy and immediate acknowledgment of the customer's dissatisfaction which could have been more comforting for them."
+    },
+    {
+      "row_id": 99,
+      "message": "My spotify playlist disappeared and It's not on the recover page.",
+      "reply": "Hey, let\u2019s troubleshoot this together! Can you try accessing Spotify in web player mode? /MN",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 3,
+      "raw_judge": "3 - The response is polite and offers an immediate next step, but it lacks empathy and specific troubleshooting steps for the issue at hand. It also assumes that web player mode might resolve the problem without acknowledging why this could be a good suggestion or how to access it if unsure."
+    },
+    {
+      "row_id": 183,
+      "message": "please put the Broadway the color purple soundtrack on yah girl needs it for driving",
+      "reply": "Hey! We're always looking to expand our playlists. Can you tell us more about this specific track? /DV",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 3,
+      "raw_judge": "3 - The support reply is polite and engages the customer by asking for additional information, which can help in understanding their needs better. However, it lacks specific details about how they plan to use the soundtrack while driving or if this request aligns with company policy. It's not poor but has room for improvement."
+    },
+    {
+      "row_id": 108,
+      "message": "John Lennon? https://t.co/rwLPgYPRMx",
+      "reply": "We understand your request! Keep an eye out for new music recommendations that might hit the right note next time /JL",
+      "true_intent": "CONTENT_LIBRARY",
+      "score": 3,
+      "raw_judge": "3 - The support reply is polite and acknowledges the customer's request, but it lacks specific information about John Lennon or his music that might be relevant for recommendations. It also doesn't directly address how to find new music related to him. However, since there was an attempt at engagement with a personal touch (/JL), I have rated this as acceptable"
+    },
+    {
+      "row_id": 172,
+      "message": "why can't siri control songs on @115888 ? \ud83d\ude29\ud83d\ude30",
+      "reply": "Hey there! Can you share your iPhone model and its iOS/Spotify versions? We\u2019ll see what we can suggest /JM",
+      "true_intent": "GENERAL_ENQUIRY",
+      "score": 3,
+      "raw_judge": "3 - The response is polite, but it lacks immediate empathy and assurance that the issue will be resolved quickly. It also doesn't provide any information about what might have gone wrong or how common this problem could be with Siri on older models like iPhone SE (1st generation)."
+    }
+  ]
+}

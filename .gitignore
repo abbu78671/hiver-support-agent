@@ -1,0 +1,28 @@
+# Dataset (too large for GitHub)
+data/raw/
+data/processed/spotify_conversations.jsonl
+data/processed/split_train.jsonl
+data/processed/split_dev.jsonl
+data/processed/split_test.jsonl
+data/processed/retrieval_corpus.jsonl
+data/processed/split_test_english.jsonl
+
+# Keep these (needed for fast reproduction)
+!data/processed/bm25_index.pkl
+!data/processed/bm25_corpus.pkl
+!data/processed/split_test_flagged.jsonl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Environment
+.env
+
+# Large outputs
+outputs/
+
+# Nested duplicate folder
+hiver-support-agent/

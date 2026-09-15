@@ -1,0 +1,20 @@
+brand:
+  name: SpotifyCares
+  twitter_handle: SpotifyCares
+  domain: music_streaming
+
+data:
+  raw_path: data/raw/twcs.csv
+  processed_path: data/processed/
+  sample_path: data/samples/spotify_sample_100.jsonl
+
+splits:
+  seed: 42
+  train_ratio: 0.70
+  dev_ratio: 0.15
+  test_ratio: 0.15
+
+filtering:
+  min_customer_message_length: 20
+  near_duplicate_bm25_threshold: 50.0
+  language: en

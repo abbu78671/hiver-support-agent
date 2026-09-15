@@ -1,0 +1,23 @@
+{
+  "baseline": "trivial",
+  "dev_set_size": 6109,
+  "intent_distribution": {
+    "PLAYBACK_ISSUE": 898,
+    "APP_TECHNICAL": 976,
+    "SUB_BILLING": 1215,
+    "ACCOUNT_ACCESS": 301,
+    "GENERAL_ENQUIRY": 2176,
+    "CONTENT_LIBRARY": 543
+  },
+  "majority_class": "GENERAL_ENQUIRY",
+  "majority_class_accuracy": 0.3562,
+  "keyword_coverage": 0.6438,
+  "escalation_always_auto": {
+    "accuracy": 0.6535,
+    "false_auto_handle_count": 2117,
+    "false_auto_handle_rate": 0.3465
+  },
+  "escalation_always_escalate": {
+    "accuracy": 0.3465
+  }
+}

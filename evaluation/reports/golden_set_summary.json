@@ -1,0 +1,18 @@
+{
+  "labelling_note": "PSEUDO-LABELS: assigned by Claude Sonnet 4.6. Not human labels. Human-vs-judge agreement inflated. Must be disclosed in report.",
+  "n": 200,
+  "intent_accuracy": 0.67,
+  "macro_f1": 0.669,
+  "escalation_accuracy": 0.735,
+  "escalation_precision": 0.6316,
+  "escalation_recall": 0.7692,
+  "escalation_f1": 0.6936,
+  "false_auto_handle_count": 18,
+  "false_auto_handle_rate": 0.09,
+  "automation_coverage": 0.61,
+  "generation_failure_count": 3,
+  "avg_latency_seconds": 68.93,
+  "total_runtime_minutes": 229.9,
+  "trivial_baseline_false_auto_rate": 0.347,
+  "simple_baseline_false_auto_rate": 0.178
+}

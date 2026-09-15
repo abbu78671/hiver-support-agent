@@ -1,0 +1,22 @@
+golden_set:
+  size: 200
+  seed: 42
+  near_duplicate_threshold: 50.0
+  targets:
+    PLAYBACK_ISSUE: 38
+    APP_TECHNICAL: 35
+    SUB_BILLING: 38
+    ACCOUNT_ACCESS: 25
+    CONTENT_LIBRARY: 25
+    GENERAL_ENQUIRY: 25
+    ambiguous: 14
+
+judge:
+  model: phi3:mini
+  sample_size: 30
+  seed: 42
+  score_range: [1, 5]
+
+baselines:
+  trivial_false_auto_handle_rate: 0.347
+  simple_false_auto_handle_rate: 0.178

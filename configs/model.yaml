@@ -1,0 +1,27 @@
+intent_classifier:
+  type: tfidf_lr
+  ngram_range: [1, 2]
+  max_features: 20000
+  min_df: 2
+  sublinear_tf: true
+  lr_C: 1.0
+  class_weight: balanced
+
+retrieval:
+  method: bm25
+  top_k: 3
+  near_duplicate_threshold: 50.0
+
+generation:
+  model: phi3:mini
+  max_tokens: 200
+  temperature: 0.3
+  top_p: 0.9
+  timeout_seconds: 120
+
+escalation:
+  high_risk_intents:
+    - SUB_BILLING
+    - ACCOUNT_ACCESS
+  confidence_threshold: 0.50
+  retrieval_score_threshold: 5.0
