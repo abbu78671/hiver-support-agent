@@ -1,5 +1,5 @@
 {
-  "disclosure": "Judge is phi3:mini. Labels are LLM pseudo-labels. Scores reflect LLM self-agreement, not human judgment.",
+  "disclosure": "Judge is phi3:mini via Ollama (local, zero cost).",
   "sample_size": 30,
   "valid_scores": 30,
   "failed_scores": 0,

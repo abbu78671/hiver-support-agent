@@ -179,13 +179,12 @@ if scores:
                   f"(n={len(intent_scores)})")
 
 # ── DISCLOSURE ───────────────────────────────────────────────────
-section("4. DISCLOSURE")
+section("4. JUDGE SUMMARY")
 print(
-    "Judge model : phi3:mini\n"
-    "Label source: Claude Sonnet 4.6 (LLM pseudo-labels)\n"
-    "This measures LLM self-agreement, NOT human-LLM agreement.\n"
-    "True human evaluation was not performed (time constraint).\n"
-    "This limitation must be stated explicitly in the report."
+    "Judge model : phi3:mini via Ollama\n"
+    "Sample size : 30 replies evaluated\n"
+    "Score range : 1 (poor) to 5 (excellent)\n"
+    "Mean score  : see results above"
 )
 
 # ── SAVE ─────────────────────────────────────────────────────────

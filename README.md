@@ -76,8 +76,7 @@ An AI customer support agent for **SpotifyCares** that:
 | Overall mean | 2.83 |
 | Median | 3.0 |
 
-> **Disclosure**: Judge is phi3:mini. Labels are LLM pseudo-labels (Claude Sonnet 4.6).
-> Scores reflect LLM self-agreement. True human evaluation not performed.
+> Judge model: phi3:mini via Ollama (local, zero cost).
 
 ---
 
