@@ -1,3 +1,265 @@
+# SpotifyCares AI Support Agent
+
+> Hiver SDE Intern Take-Home Assignment — AI Customer Support Agent
+
+An end-to-end AI support pipeline for SpotifyCares that classifies 
+customer tweets, retrieves grounded historical resolutions, 
+generates draft replies, and decides whether to auto-handle or 
+escalate to a human agent — with evidence-backed evaluation.
+
+---
+
+## Table of Contents
+
+- [What This Builds](#what-this-builds)
+- [Results](#results)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Quickstart](#quickstart)
+- [Project Structure](#project-structure)
+- [Intent Taxonomy](#intent-taxonomy)
+- [Escalation Policy](#escalation-policy)
+- [Evaluation Methodology](#evaluation-methodology)
+- [Baselines](#baselines)
+- [Failure Analysis](#failure-analysis)
+- [What Is Misleading About the Headline Number](#what-is-misleading-about-the-headline-number)
+- [Limitations](#limitations)
+- [What I Would Do With One More Week](#what-i-would-do-with-one-more-week)
+- [Dataset](#dataset)
+- [Decision Log](#decision-log)
+- [Sources](#sources)
+
+---
+
+## What This Builds
+
+An AI customer support agent for **SpotifyCares** that:
+
+1. **Classifies** incoming customer tweets into 6 intents derived from real data
+2. **Retrieves** the top-3 most similar historical SpotifyCares resolutions (BM25, 18,685 cases)
+3. **Decides** whether to auto-handle or escalate — with a stated reason
+4. **Generates** grounded draft replies using phi3:mini anchored to retrieved examples
+
+---
+
+## Results
+
+### Intent Classification — 200-example golden set
+
+| Intent | Precision | Recall | F1 |
+|---|---|---|---|
+| SUB_BILLING | 76.7% | 94.3% | 84.6% |
+| ACCOUNT_ACCESS | 92.3% | 77.4% | 84.2% |
+| APP_TECHNICAL | 68.8% | 71.0% | 69.8% |
+| PLAYBACK_ISSUE | 63.9% | 71.9% | 67.6% |
+| CONTENT_LIBRARY | 70.0% | 55.3% | 61.8% |
+| GENERAL_ENQUIRY | 33.3% | 33.3% | 33.3% |
+| **Macro F1** | | | **66.9%** |
+
+### Escalation Policy
+
+| Metric | Value |
+|---|---|
+| False auto-handle rate | **9.0%** (trivial baseline: 34.7%) |
+| Escalation recall | 76.9% |
+| Escalation F1 | 69.4% |
+| Automation coverage | 61.0% |
+
+### Response Quality
+
+| Metric | Value |
+|---|---|
+| Mean judge score | 2.83 / 5.0 |
+| Sample size | 30 auto-handled replies |
+| Judge model | phi3:mini via Ollama |
+
+### Baselines
+
+| System | Macro F1 | False Auto-Handle |
+|---|---|---|
+| Trivial — majority class + always auto-handle | ~17% | 34.7% |
+| Simple — TF-IDF + LR (dev set, keyword labels) | 90%* | 17.8%* |
+| **Final system — golden set** | **66.9%** | **9.0%** |
+
+> *Dev set metrics use keyword pseudo-labels — not directly comparable to golden set
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+|---|---|
+| Language | Python 3.11 |
+| Intent Classifier | TF-IDF + Logistic Regression (scikit-learn) |
+| Retrieval | BM25 Okapi (rank-bm25) |
+| Generation | phi3:mini via Ollama (local, zero cost) |
+| LLM Judge | phi3:mini via Ollama |
+| Language Detection | langdetect |
+| Data Processing | pandas, numpy |
+| Testing | pytest (16 tests) |
+| Dataset | Kaggle: thoughtvector/customer-support-on-twitter |
+
+Customer tweet
+│
+▼
+┌─────────────────────────┐
+│ TF-IDF + Logistic │ → predicted intent
+│ Regression Classifier │ → confidence score
+└─────────────────────────┘
+│
+▼
+┌─────────────────────────┐
+│ Escalation Policy │ SUB_BILLING / ACCOUNT_ACCESS → always ESCALATE
+│ (Evidence-backed) │ confidence < 0.50 → ESCALATE
+│ │ retrieval score < 5.0 → ESCALATE
+└─────────────────────────┘
+│
+├──── ESCALATE → { decision, reason }
+│ No generation. Human agent handles.
+│
+└──── AUTO_HANDLE
+│
+▼
+┌─────────────────────┐
+│ BM25 Retrieval │ → top-3 similar historical
+│ (18,685 docs) │ SpotifyCares conversations
+└─────────────────────┘
+│
+▼
+┌─────────────────────┐
+│ phi3:mini │ → grounded draft reply
+│ Generation │ anchored to retrieved examples
+└─────────────────────┘
+│
+▼
+Draft reply
+
+
+**Design principle**: Escalation runs before generation.
+Cases that should escalate never reach the LLM — saving compute
+and preventing bot responses on sensitive issues.
+
+---
+
+## Quickstart
+
+### Prerequisites
+
+- Python 3.11+
+- [Ollama](https://ollama.com) installed locally
+- phi3:mini model pulled
+
+```bash
+# Pull the model (one time, ~2GB)
+ollama pull phi3:mini
+
+# Start Ollama (keep this running in a separate terminal)
+ollama serve
+```
+
+### Option A — Fast path (under 15 minutes)
+
+Uses pre-built artifacts committed to the repository.
+
+```bash
+git clone https://github.com/abbu78671/hiver-support-agent.git
+cd hiver-support-agent
+pip install -r requirements.txt
+python scripts/11_evaluate_golden_set.py
+```
+
+Results appear in `evaluation/reports/golden_set_summary.json`
+
+### Option B — Full rebuild (4+ hours)
+
+Download the dataset first:
+- Kaggle: `thoughtvector/customer-support-on-twitter`
+- Place `twcs.csv` in `data/raw/twcs.csv`
+
+Then run scripts in order:
+
+```bash
+python scripts/01_inspect_data.py
+python scripts/04_build_conversations.py
+python scripts/05_split_dataset.py
+python scripts/06_trivial_baseline.py
+python scripts/07_simple_baseline.py
+python scripts/08_build_retrieval.py
+python scripts/09_fix_preprocessing.py
+python scripts/10_sample_golden_set.py
+python scripts/11_evaluate_golden_set.py
+python scripts/12_llm_judge.py
+```
+
+### Demo — Test on a single message
+
+```bash
+python scripts/demo.py
+```
+
+This runs 5 test messages through the full pipeline interactively.
+
+### Run tests
+
+```bash
+pytest tests/ -v
+```
+
+---
+
+## Project Structure
+
+hiver-support-agent/
+├── README.md
+├── requirements.txt
+├── decision_log.md ← 10 engineering decisions with evidence
+├── .env.example
+├── configs/
+│ ├── brand.yaml ← brand and data config
+│ ├── model.yaml ← classifier, retrieval, generation config
+│ └── eval.yaml ← evaluation config
+├── data/
+│ ├── processed/
+│ │ ├── bm25_index.pkl ← pre-built BM25 index (committed)
+│ │ ├── bm25_corpus.pkl ← retrieval corpus (committed)
+│ │ └── split_test_flagged.jsonl
+│ └── samples/
+│ └── spotify_sample_100.jsonl
+├── scripts/
+│ ├── 01_inspect_data.py ← dataset inspection
+│ ├── 04_build_conversations.py← thread reconstruction
+│ ├── 05_split_dataset.py ← train/dev/test split
+│ ├── 06_trivial_baseline.py ← majority class baseline
+│ ├── 07_simple_baseline.py ← TF-IDF + LR baseline
+│ ├── 08_build_retrieval.py ← BM25 index construction
+│ ├── 09_fix_preprocessing.py ← language filter + near-dup detection
+│ ├── 10_sample_golden_set.py ← golden set sampling
+│ ├── 11_evaluate_golden_set.py← full pipeline evaluation
+│ ├── 12_llm_judge.py ← response quality evaluation
+│ └── demo.py ← interactive demo
+├── src/
+│ ├── generation/
+│ │ └── generator.py ← BM25 retrieval + phi3:mini generation
+│ └── policy/
+│ └── escalation.py ← evidence-backed escalation policy
+├── tests/
+│ ├── test_escalation.py ← 7 escalation policy tests
+│ ├── test_retrieval.py ← 9 retrieval and tokenization tests
+│ └── test_classifier.py ← 4 classifier interface tests
+├── evaluation/
+│ ├── golden_set/
+│ │ └── golden_set_labelled.csv ← 200-example evaluation set
+│ ├── baselines/
+│ │ ├── tfidf_vectorizer.pkl
+│ │ └── lr_classifier.pkl
+│ └── reports/
+│ ├── golden_set_summary.json ← headline metrics
+│ ├── golden_set_results.jsonl ← per-example results
+│ └── judge_results.json ← response quality scores
+└── experiments/
+└── experiment_log.jsonl ← 5 experiments logged
+
+
 
 ---
 
@@ -194,3 +456,9 @@ Key decisions:
 | langdetect library | Language filtering |
 | phi3:mini — Microsoft (2024) via Ollama | Generation and judging |
 | Hiver SDE Intern Assignment brief | Problem framing |
+
+
+
+---
+
+## Architecture
