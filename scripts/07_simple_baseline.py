@@ -13,6 +13,7 @@ import pickle
 import numpy as np
 from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import FeatureUnion
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     classification_report,
@@ -122,15 +123,29 @@ for label, count in sorted(label_counts.items(), key=lambda x: -x[1]):
 # ── TRAIN TFIDF + LR ─────────────────────────────────────────────
 section("3. TRAINING TF-IDF + LOGISTIC REGRESSION")
 
-vectorizer = TfidfVectorizer(
-    ngram_range=(1, 2),     # unigrams and bigrams
-    max_features=20_000,    # top 20k features
-    min_df=2,               # ignore terms appearing < 2 times
-    sublinear_tf=True,      # apply log normalization
+word_vectorizer = TfidfVectorizer(
+    analyzer='word',
+    ngram_range=(1, 2),
+    max_features=20_000,
+    min_df=2,
+    sublinear_tf=True,
     strip_accents='unicode',
     lowercase=True
 )
 
+char_vectorizer = TfidfVectorizer(
+    analyzer='char',
+    ngram_range=(3, 5),
+    max_features=15_000,
+    min_df=2,
+    sublinear_tf=True,
+    lowercase=True
+)
+
+vectorizer = FeatureUnion([
+    ('word', word_vectorizer),
+    ('char', char_vectorizer)
+])
 print("Fitting TF-IDF vectorizer...")
 X_train = vectorizer.fit_transform(train_texts)
 X_dev   = vectorizer.transform(dev_texts)
@@ -138,11 +153,13 @@ print(f"Feature matrix shape (train): {X_train.shape}")
 print(f"Feature matrix shape (dev):   {X_dev.shape}")
 
 print("\nTraining Logistic Regression...")
+
 clf = LogisticRegression(
-    max_iter=1000,
+    max_iter=2000,
     random_state=SEED,
-    C=1.0,                  # regularization strength
-    class_weight='balanced' # handles class imbalance
+    C=2.0,
+    class_weight='balanced',
+    solver='lbfgs'
 )
 clf.fit(X_train, train_labels)
 print("Training complete.")
