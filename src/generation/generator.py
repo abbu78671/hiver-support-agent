@@ -15,7 +15,7 @@ BM25_INDEX_PATH  = "data/processed/bm25_index.pkl"
 CORPUS_PATH      = "data/processed/bm25_corpus.pkl"
 OLLAMA_MODEL     = "phi3:mini"
 TOP_K_RETRIEVAL  = 3
-MAX_REPLY_TOKENS = 200
+MAX_REPLY_TOKENS = 80
 OLLAMA_TIMEOUT   = 120
 
 
@@ -85,15 +85,16 @@ def build_prompt(customer_message, intent, retrieved_examples):
     prompt = f"""You are a SpotifyCares support agent replying on Twitter.
 
 STRICT RULES:
-1. NEVER promise a refund, credit, or any account action
-2. NEVER say you have reviewed or checked the account
-3. NEVER invent dollar amounts, timelines, or policy details
-4. ONLY use information visible in the examples below
-5. If examples show asking for more info, do the same
-6. Keep reply to 1-2 short sentences maximum
-7. Match SpotifyCares tone: friendly, direct, brief
-8. Do NOT start with I
-9. Do NOT add any notes or explanations after the reply
+1. NEVER claim that a refund, credit, cancellation, account change, or other action has already been completed.
+2. NEVER promise or state a specific refund amount, processing time, delivery time, or policy detail unless explicitly supported by the examples.
+3. NEVER say you checked, reviewed, accessed, or changed the customer's account.
+4. NEVER copy agent-only metadata, signatures, usernames, handles, tags, or suffixes from the examples.
+5. Use retrieved examples only as style and troubleshooting guidance. Do not copy their specific actions or claims when they are not directly supported.
+6. If the customer's issue is billing, access, or another sensitive matter, ask for the relevant details or direct them to the appropriate support process instead of claiming an action was completed.
+7. Keep the reply to 1-2 short sentences.
+8. Match SpotifyCares tone: friendly, direct, brief.
+9. Do NOT start with "I".
+10. Return ONLY the customer-facing Twitter reply.
 
 CUSTOMER INTENT: {intent}
 
@@ -101,8 +102,12 @@ EXAMPLES:
 {examples_text}
 CUSTOMER MESSAGE: {customer_message}
 
-SPOTIFYCARES REPLY:"""
+Return ONLY the final Twitter support reply.
+Do not repeat the customer message.
+Do not output "CUSTOMER", "EXAMPLES", "CUSTOMER INTENT", or "SPOTIFYCARES REPLY".
+Do not output labels, metadata, notes, or analysis.
 
+SPOTIFYCARES REPLY:"""
     return prompt
 
 
@@ -111,13 +116,24 @@ def call_ollama(prompt, model=OLLAMA_MODEL, timeout=OLLAMA_TIMEOUT):
         "model": model,
         "prompt": prompt,
         "stream": False,
+        "keep_alive": -1,
         "options": {
             "num_predict": MAX_REPLY_TOKENS,
-            "temperature": 0.3,
+            "num_ctx": 2048,
+            "temperature": 0.2,
             "top_p": 0.9,
+            "stop": [
+                "\nCUSTOMER:",
+                "\nCUSTOMER INTENT:",
+                "\nEXAMPLES:",
+                "\nSPOTIFYCARES REPLY:",
+                "\n-----"
+            ]
         }
     })
+
     start = time.time()
+
     try:
         result = subprocess.run(
             ["curl", "-s", "-X", "POST",
@@ -125,22 +141,52 @@ def call_ollama(prompt, model=OLLAMA_MODEL, timeout=OLLAMA_TIMEOUT):
              "-H", "Content-Type: application/json",
              "-d", payload],
             capture_output=True,
-            encoding='utf-8',
-            errors='replace',
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout
         )
+
         latency = time.time() - start
+
         if result.returncode != 0:
             return None, latency
+
         response = json.loads(result.stdout)
-        raw = response.get('response', '').strip()
-        for marker in ['(Note:', '(note:', 'Note:', '\n(']:
+        raw = response.get("response", "").strip()
+
+        # Remove leaked agent metadata/signatures from historical examples.
+        raw = re.sub(r"\s*/[A-Z]{2,4}\b", "", raw).strip()
+
+        # Reject obvious fabricated account actions.
+        unsafe_patterns = [
+            r"\bwe(?:'ve| have) now refunded\b",
+            r"\bwe refunded\b",
+            r"\bwe have refunded\b",
+            r"\brefunded your\b",
+            r"\bwe changed your account\b",
+            r"\bwe cancelled your\b",
+            r"\bwe canceled your\b",
+            r"\b3-5 (?:working )?days\b",
+        ]
+
+        if any(
+            re.search(pattern, raw, re.IGNORECASE)
+            for pattern in unsafe_patterns
+        ):
+            return (
+                "Thanks for reaching out. We'll need to review this with our support team. "
+                "Please contact us through the official Spotify support channel for further help.",
+                latency
+            )
+
+        for marker in ["(Note:", "(note:", "Note:", "\n("]:
             if marker in raw:
                 raw = raw[:raw.index(marker)].strip()
+
         return raw, latency
+
     except Exception:
         return None, time.time() - start
-
 
 def generate_reply(customer_message, intent, bm25, corpus):
     retrieved = retrieve(customer_message, bm25, corpus)
@@ -184,3 +230,4 @@ if __name__ == "__main__":
             print(f"  [{ex['bm25_score']:.1f}] {ex['customer_message'][:80]}")
         print(f"REPLY: {result['generated_reply']}")
         print(f"LATENCY: {result['latency_seconds']}s")
+
