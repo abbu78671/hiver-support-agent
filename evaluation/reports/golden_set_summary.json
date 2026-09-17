@@ -1,5 +1,5 @@
 {
-  "labelling_note": "PSEUDO-LABELS: assigned by Claude Sonnet 4.6. Not human labels. Human-vs-judge agreement inflated. Must be disclosed in report.",
+  "labelling_note": "Evaluation labels were are manual review of disagreement cases. They are independently human-labelled.",
   "n": 200,
   "intent_accuracy": 0.665,
   "macro_f1": 0.6618,

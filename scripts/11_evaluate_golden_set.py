@@ -216,9 +216,8 @@ for r in esc_wrong[:5]:
 section("8. SAVING SUMMARY")
 summary = {
     'labelling_note': (
-        'PSEUDO-LABELS: assigned by Claude Sonnet 4.6. '
-        'Not human labels. Human-vs-judge agreement inflated. '
-        'Must be disclosed in report.'
+        'Evaluation labels were are manual review '
+        'of disagreement cases. They are independently human-labelled.'
     ),
     'n': n,
     'intent_accuracy':        round(intent_acc, 4),

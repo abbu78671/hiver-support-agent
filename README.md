@@ -108,10 +108,7 @@ Customer Tweet
 Preprocessing
       ↓
 Intent Classification
-      ↓
-Confidence Check
-      ↓
-Escalation Policy
+(TF-IDF + Logistic Regression)
       ↓
 BM25 Retrieval
       ↓
@@ -121,14 +118,25 @@ Phi-3 Mini Generation
       ↓
 Grounded Draft Reply
       ↓
-Final Decision
+Escalation Policy
       ↓
-┌─────────────────┬─────────────────┐
-│                 │                 │
-AUTO_HANDLE       ESCALATE
-│                 │
-Reply to          Human support
-customer          agent handles
+┌──────────────────────────┐
+│ Evaluate Risk Signals    │
+│ • Intent                 │
+│ • Confidence             │
+│ • Retrieval Score        │
+│ • Generation Status      │
+└────────────┬─────────────┘
+             ↓
+      ┌───────────────┐
+      │ Final Decision│
+      └───────┬───────┘
+              ↓
+        ┌─────┴─────┐
+        ↓           ↓
+   AUTO_HANDLE   ESCALATE
+        ↓           ↓
+   Send Reply   Human Support
 
 **Design principle**: Escalation runs before generation.
 Cases that should escalate never reach the LLM — saving compute
@@ -413,7 +421,7 @@ Zero conversation ID overlap confirmed across all splits.
 
 ## Decision Log
 
-See [decision_log.md](decision_log.md) for 10 engineering decisions,
+See [decision_log.md](decision_log.md) for 15 engineering decisions,
 each with alternative considered and evidence for the choice made.
 
 Key decisions:
@@ -421,7 +429,7 @@ Key decisions:
 - Why BM25 over sentence-transformer embeddings
 - Why TF-IDF + LR over fine-tuned model
 - Why conversation-level splitting over tweet-level
-- Why escalation runs before generation
+- - How escalation combines intent, confidence, retrieval quality, and generation status
 
 ---
 
