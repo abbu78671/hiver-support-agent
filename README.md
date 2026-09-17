@@ -1,10 +1,10 @@
-# SpotifyCares AI Support Agent
+﻿# SpotifyCares AI Support Agent
 
 > Hiver SDE Intern Take-Home Assignment — AI Customer Support Agent
 
-An end-to-end AI support pipeline for SpotifyCares that classifies 
-customer tweets, retrieves grounded historical resolutions, 
-generates draft replies, and decides whether to auto-handle or 
+An end-to-end AI support pipeline for SpotifyCares that classifies
+customer tweets, retrieves grounded historical resolutions,
+generates draft replies, and decides whether to auto-handle or
 escalate to a human agent — with evidence-backed evaluation.
 
 ---
@@ -20,7 +20,6 @@ escalate to a human agent — with evidence-backed evaluation.
 - [Intent Taxonomy](#intent-taxonomy)
 - [Escalation Policy](#escalation-policy)
 - [Evaluation Methodology](#evaluation-methodology)
-- [Baselines](#baselines)
 - [Failure Analysis](#failure-analysis)
 - [What Is Misleading About the Headline Number](#what-is-misleading-about-the-headline-number)
 - [Limitations](#limitations)
@@ -81,7 +80,7 @@ An AI customer support agent for **SpotifyCares** that:
 | Simple — TF-IDF + LR (dev set, keyword labels) | 90%* | 17.8%* |
 | **Final system — golden set** | **66.9%** | **9.0%** |
 
-> *Dev set metrics use keyword pseudo-labels — not directly comparable to golden set
+> \*Dev set metrics use keyword pseudo-labels — not directly comparable to golden set
 
 ---
 
@@ -98,6 +97,10 @@ An AI customer support agent for **SpotifyCares** that:
 | Data Processing | pandas, numpy |
 | Testing | pytest (16 tests) |
 | Dataset | Kaggle: thoughtvector/customer-support-on-twitter |
+
+---
+
+## Architecture
 
 Customer tweet
 │
@@ -176,8 +179,6 @@ Download the dataset first:
 - Kaggle: `thoughtvector/customer-support-on-twitter`
 - Place `twcs.csv` in `data/raw/twcs.csv`
 
-Then run scripts in order:
-
 ```bash
 python scripts/01_inspect_data.py
 python scripts/04_build_conversations.py
@@ -196,8 +197,6 @@ python scripts/12_llm_judge.py
 ```bash
 python scripts/demo.py
 ```
-
-This runs 5 test messages through the full pipeline interactively.
 
 ### Run tests
 
@@ -226,39 +225,31 @@ hiver-support-agent/
 │ └── samples/
 │ └── spotify_sample_100.jsonl
 ├── scripts/
-│ ├── 01_inspect_data.py ← dataset inspection
-│ ├── 04_build_conversations.py← thread reconstruction
-│ ├── 05_split_dataset.py ← train/dev/test split
-│ ├── 06_trivial_baseline.py ← majority class baseline
-│ ├── 07_simple_baseline.py ← TF-IDF + LR baseline
-│ ├── 08_build_retrieval.py ← BM25 index construction
-│ ├── 09_fix_preprocessing.py ← language filter + near-dup detection
-│ ├── 10_sample_golden_set.py ← golden set sampling
-│ ├── 11_evaluate_golden_set.py← full pipeline evaluation
-│ ├── 12_llm_judge.py ← response quality evaluation
-│ └── demo.py ← interactive demo
+│ ├── 01_inspect_data.py
+│ ├── 04_build_conversations.py
+│ ├── 05_split_dataset.py
+│ ├── 06_trivial_baseline.py
+│ ├── 07_simple_baseline.py
+│ ├── 08_build_retrieval.py
+│ ├── 09_fix_preprocessing.py
+│ ├── 10_sample_golden_set.py
+│ ├── 11_evaluate_golden_set.py
+│ ├── 12_llm_judge.py
+│ └── demo.py
 ├── src/
-│ ├── generation/
-│ │ └── generator.py ← BM25 retrieval + phi3:mini generation
-│ └── policy/
-│ └── escalation.py ← evidence-backed escalation policy
+│ ├── generation/generator.py ← BM25 retrieval + phi3:mini generation
+│ └── policy/escalation.py ← evidence-backed escalation policy
 ├── tests/
-│ ├── test_escalation.py ← 7 escalation policy tests
-│ ├── test_retrieval.py ← 9 retrieval and tokenization tests
-│ └── test_classifier.py ← 4 classifier interface tests
-├── evaluation/
-│ ├── golden_set/
-│ │ └── golden_set_labelled.csv ← 200-example evaluation set
-│ ├── baselines/
-│ │ ├── tfidf_vectorizer.pkl
-│ │ └── lr_classifier.pkl
-│ └── reports/
-│ ├── golden_set_summary.json ← headline metrics
-│ ├── golden_set_results.jsonl ← per-example results
-│ └── judge_results.json ← response quality scores
-└── experiments/
-└── experiment_log.jsonl ← 5 experiments logged
-
+│ ├── test_escalation.py ← 7 tests
+│ ├── test_retrieval.py ← 9 tests
+│ └── test_classifier.py ← 4 tests
+└── evaluation/
+├── golden_set/golden_set_labelled.csv
+├── baselines/
+└── reports/
+├── golden_set_summary.json
+├── golden_set_results.jsonl
+└── judge_results.json
 
 
 ---
@@ -277,7 +268,7 @@ conversations. Not assumed — observed from real data.
 | CONTENT_LIBRARY | Missing songs, removed albums, metadata | "Album disappeared from my library" |
 | GENERAL_ENQUIRY | Feature requests, feedback, praise, unclear | "When will you add this feature?" |
 
-### Ambiguous Boundaries (documented)
+### Ambiguous Boundaries
 
 - **PLAYBACK vs APP_TECHNICAL**: App crash → APP_TECHNICAL. Music won't play but app works → PLAYBACK_ISSUE
 - **ACCOUNT vs SUB_BILLING**: Can't log in → ACCOUNT_ACCESS. Logged in but wrong plan → SUB_BILLING
@@ -362,7 +353,7 @@ Zero conversation ID overlap confirmed across all splits.
 
 ### 2. Mid-conversation tweets lack context
 - **Example**: "MacOS 10.12.6 - view scale is set to actual size" → predicted GENERAL_ENQUIRY
-- **Cause**: Follow-up messages are meaningless without conversation history (49.2% of conversations are multi-turn)
+- **Cause**: Follow-up messages are meaningless without conversation history
 
 ### 3. ACCOUNT_ACCESS escalation rule is too broad
 - **Example**: "Did regression testing miss the login redirect loop?" → escalated unnecessarily
@@ -382,22 +373,13 @@ Zero conversation ID overlap confirmed across all splits.
 
 **Macro F1 of 66.9% has four specific problems:**
 
-1. **GENERAL_ENQUIRY at 33.3% F1 drags macro down.**
-   The five operationally important intents average 73.6% F1.
-   Macro weights all classes equally — a misleading choice when
-   one class is a poorly-defined catch-all.
+1. **GENERAL_ENQUIRY at 33.3% F1 drags macro down.** The five operationally important intents average 73.6% F1. Macro weights all classes equally — misleading when one class is a poorly-defined catch-all.
 
-2. **Baseline comparison uses different label systems.**
-   Simple baseline (90%*) was measured on dev set with keyword
-   pseudo-labels. Final system (66.9%) was measured on golden set
-   with independent labels. Not directly comparable.
+2. **Baseline comparison uses different label systems.** Simple baseline (90%\*) was measured on dev set with keyword pseudo-labels. Final system (66.9%) was measured on golden set with independent labels. Not directly comparable.
 
-3. **9.0% false auto-handle = 18 real customers.**
-   Those 18 customers received bot responses when they needed
-   a human. The business cost of those 18 errors is unknown.
+3. **9.0% false auto-handle = 18 real customers.** Those 18 received bot responses when they needed a human. Business cost unknown.
 
-4. **Response quality of 2.83/5.0 is between poor and acceptable.**
-   The generation component is the weakest part of the system.
+4. **Response quality of 2.83/5.0 is between poor and acceptable.** Generation is the weakest component.
 
 ---
 
@@ -414,9 +396,9 @@ Zero conversation ID overlap confirmed across all splits.
 ## What I Would Do With One More Week
 
 1. **Multi-turn context** — prepend prior conversation turns to classifier input
-2. **Embedding retrieval comparison** — measure whether sentence-transformers improve CONTENT_LIBRARY recall specifically
-3. **Urgency detection** — add signal for "this has happened multiple times" to escalation policy
-4. **Grounding verification** — check whether generated reply references retrieved content or invents new information
+2. **Embedding retrieval comparison** — measure whether sentence-transformers improve CONTENT_LIBRARY recall
+3. **Urgency detection** — add signal for "this has happened multiple times"
+4. **Grounding verification** — check whether generated reply references retrieved content
 5. **Threshold optimization** — grid search confidence and retrieval thresholds on dev set
 
 ---
@@ -425,7 +407,7 @@ Zero conversation ID overlap confirmed across all splits.
 
 - **Source**: Kaggle `thoughtvector/customer-support-on-twitter`
 - **Brand selected**: SpotifyCares
-- **Selection evidence**: Highest clean volume (43,265 brand tweets), 0% duplicate rate, 100% English, tight domain (5–6 intents)
+- **Selection evidence**: Highest clean volume (43,265 brand tweets), 0% duplicate rate, 100% English, tight domain
 - **Total conversations built**: 40,728 customer→brand pairs
 - **Retrieval corpus**: 18,685 non-deflection train conversations
 
@@ -456,10 +438,3 @@ Key decisions:
 | langdetect library | Language filtering |
 | phi3:mini — Microsoft (2024) via Ollama | Generation and judging |
 | Hiver SDE Intern Assignment brief | Problem framing |
-
-
-
-
----
-
-## Architecture
