@@ -138,9 +138,7 @@ Escalation Policy
         ↓           ↓
    Send Reply   Human Support
 
-**Design principle**: Escalation runs before generation.
-Cases that should escalate never reach the LLM — saving compute
-and preventing bot responses on sensitive issues.
+**Design principle**:Retrieve historical support evidence and generate a grounded draft reply before applying the escalation policy. The final decision combines intent, classifier confidence, retrieval quality, and generation status to determine whether the case is auto-handled or sent to a human agent.
 
 ---
 
