@@ -429,7 +429,7 @@ Key decisions:
 - Why BM25 over sentence-transformer embeddings
 - Why TF-IDF + LR over fine-tuned model
 - Why conversation-level splitting over tweet-level
-- - How escalation combines intent, confidence, retrieval quality, and generation status
+- How escalation combines intent, confidence, retrieval quality, and generation status
 
 ---
 
