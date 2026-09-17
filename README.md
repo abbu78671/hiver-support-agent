@@ -103,41 +103,32 @@ An AI customer support agent for **SpotifyCares** that:
 ## Architecture
 
 ```text
-Customer tweet
-      │
-      ▼
-┌─────────────────────────┐
-│  TF-IDF + Logistic      │  → predicted intent
-│  Regression Classifier  │  → confidence score
-└─────────────────────────┘
-      │
-      ▼
-┌─────────────────────────┐
-│  Escalation Policy      │  SUB_BILLING / ACCOUNT_ACCESS → always ESCALATE
-│  (Evidence-backed)      │  confidence < 0.50 → ESCALATE
-│                         │  retrieval score < 5.0 → ESCALATE
-└─────────────────────────┘
-      │
-      ├──── ESCALATE → { decision, reason }
-      │                 No generation. Human agent handles.
-      │
-      └──── AUTO_HANDLE
-                │
-                ▼
-      ┌─────────────────────┐
-      │  BM25 Retrieval     │  → top-3 similar historical
-      │  (18,685 docs)      │    SpotifyCares conversations
-      └─────────────────────┘
-                │
-                ▼
-      ┌─────────────────────┐
-      │  phi3:mini          │  → grounded draft reply
-      │  Generation         │    anchored to retrieved examples
-      └─────────────────────┘
-                │
-                ▼
-            Draft reply
-```
+Customer Tweet
+      ↓
+Preprocessing
+      ↓
+Intent Classification
+      ↓
+Confidence Check
+      ↓
+Escalation Policy
+      ↓
+BM25 Retrieval
+      ↓
+Top-3 Relevant Historical Cases
+      ↓
+Phi-3 Mini Generation
+      ↓
+Grounded Draft Reply
+      ↓
+Final Decision
+      ↓
+┌─────────────────┬─────────────────┐
+│                 │                 │
+AUTO_HANDLE       ESCALATE
+│                 │
+Reply to          Human support
+customer          agent handles
 
 **Design principle**: Escalation runs before generation.
 Cases that should escalate never reach the LLM — saving compute
@@ -210,50 +201,55 @@ pytest tests/ -v
 ## Project Structure
 
 ```text
-hiver-support-agent/
-├── README.md
-├── requirements.txt
-├── decision_log.md              ← 10 engineering decisions with evidence
-├── .env.example
-├── configs/
-│   ├── brand.yaml               ← brand and data config
-│   ├── model.yaml               ← classifier, retrieval, generation config
-│   └── eval.yaml                ← evaluation config
-├── data/
-│   ├── processed/
-│   │   ├── bm25_index.pkl       ← pre-built BM25 index (committed)
-│   │   ├── bm25_corpus.pkl      ← retrieval corpus (committed)
-│   │   └── split_test_flagged.jsonl
-│   └── samples/
-│       └── spotify_sample_100.jsonl
-├── scripts/
-│   ├── 01_inspect_data.py       ← dataset inspection
-│   ├── 04_build_conversations.py
-│   ├── 05_split_dataset.py
-│   ├── 06_trivial_baseline.py
-│   ├── 07_simple_baseline.py
-│   ├── 08_build_retrieval.py
-│   ├── 09_fix_preprocessing.py
-│   ├── 10_sample_golden_set.py
-│   ├── 11_evaluate_golden_set.py
-│   ├── 12_llm_judge.py
-│   └── demo.py
-├── src/
-│   ├── generation/generator.py  ← BM25 retrieval + phi3:mini generation
-│   └── policy/escalation.py    ← evidence-backed escalation policy
-├── tests/
-│   ├── test_escalation.py       ← 7 tests
-│   ├── test_retrieval.py        ← 9 tests
-│   └── test_classifier.py       ← 4 tests
-└── evaluation/
-    ├── golden_set/golden_set_labelled.csv
-    ├── baselines/
-    └── reports/
-        ├── golden_set_summary.json
-        ├── golden_set_results.jsonl
-        └── judge_results.json
-```
+1. Data Inspection
+   ↓
+   scripts/01_inspect_data.py
+   scripts/01b_inspect_brands.py
+   scripts/02_brand_analysis.py
 
+2. Brand & Conversation Preparation
+   ↓
+   scripts/03_spotify_quality_audit.py
+   scripts/04_build_conversations.py
+   scripts/05_split_dataset.py
+
+3. Baseline Systems
+   ↓
+   scripts/06_trivial_baseline.py
+   scripts/07_simple_baseline.py
+
+4. Retrieval Pipeline
+   ↓
+   scripts/08_build_retrieval.py
+   scripts/09_fix_preprocessing.py
+   BM25 index + retrieval corpus
+
+5. Golden Evaluation Set
+   ↓
+   scripts/10_sample_golden_set.py
+   evaluation/golden_set/golden_set_labelled.csv
+
+6. Full System Evaluation
+   ↓
+   scripts/11_evaluate_golden_set.py
+   scripts/12_llm_judge.py
+
+7. Runtime System
+   ↓
+   src/generation/generator.py
+   src/policy/escalation.py
+
+8. Testing
+   ↓
+   tests/test_classifier.py
+   tests/test_retrieval.py
+   tests/test_escalation.py
+
+9. Results & Reports
+   ↓
+   evaluation/reports/
+   experiments/experiment_log.jsonl
+   decision_log.md
 ---
 
 ## Intent Taxonomy
