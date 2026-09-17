@@ -1,4 +1,4 @@
-﻿# SpotifyCares AI Support Agent
+# SpotifyCares AI Support Agent
 
 > Hiver SDE Intern Take-Home Assignment — AI Customer Support Agent
 
@@ -102,41 +102,42 @@ An AI customer support agent for **SpotifyCares** that:
 
 ## Architecture
 
+```text
 Customer tweet
-│
-▼
+      │
+      ▼
 ┌─────────────────────────┐
-│ TF-IDF + Logistic │ → predicted intent
-│ Regression Classifier │ → confidence score
+│  TF-IDF + Logistic      │  → predicted intent
+│  Regression Classifier  │  → confidence score
 └─────────────────────────┘
-│
-▼
+      │
+      ▼
 ┌─────────────────────────┐
-│ Escalation Policy │ SUB_BILLING / ACCOUNT_ACCESS → always ESCALATE
-│ (Evidence-backed) │ confidence < 0.50 → ESCALATE
-│ │ retrieval score < 5.0 → ESCALATE
+│  Escalation Policy      │  SUB_BILLING / ACCOUNT_ACCESS → always ESCALATE
+│  (Evidence-backed)      │  confidence < 0.50 → ESCALATE
+│                         │  retrieval score < 5.0 → ESCALATE
 └─────────────────────────┘
-│
-├──── ESCALATE → { decision, reason }
-│ No generation. Human agent handles.
-│
-└──── AUTO_HANDLE
-│
-▼
-┌─────────────────────┐
-│ BM25 Retrieval │ → top-3 similar historical
-│ (18,685 docs) │ SpotifyCares conversations
-└─────────────────────┘
-│
-▼
-┌─────────────────────┐
-│ phi3:mini │ → grounded draft reply
-│ Generation │ anchored to retrieved examples
-└─────────────────────┘
-│
-▼
-Draft reply
-
+      │
+      ├──── ESCALATE → { decision, reason }
+      │                 No generation. Human agent handles.
+      │
+      └──── AUTO_HANDLE
+                │
+                ▼
+      ┌─────────────────────┐
+      │  BM25 Retrieval     │  → top-3 similar historical
+      │  (18,685 docs)      │    SpotifyCares conversations
+      └─────────────────────┘
+                │
+                ▼
+      ┌─────────────────────┐
+      │  phi3:mini          │  → grounded draft reply
+      │  Generation         │    anchored to retrieved examples
+      └─────────────────────┘
+                │
+                ▼
+            Draft reply
+```
 
 **Design principle**: Escalation runs before generation.
 Cases that should escalate never reach the LLM — saving compute
@@ -208,49 +209,50 @@ pytest tests/ -v
 
 ## Project Structure
 
+```text
 hiver-support-agent/
 ├── README.md
 ├── requirements.txt
-├── decision_log.md ← 10 engineering decisions with evidence
+├── decision_log.md              ← 10 engineering decisions with evidence
 ├── .env.example
 ├── configs/
-│ ├── brand.yaml ← brand and data config
-│ ├── model.yaml ← classifier, retrieval, generation config
-│ └── eval.yaml ← evaluation config
+│   ├── brand.yaml               ← brand and data config
+│   ├── model.yaml               ← classifier, retrieval, generation config
+│   └── eval.yaml                ← evaluation config
 ├── data/
-│ ├── processed/
-│ │ ├── bm25_index.pkl ← pre-built BM25 index (committed)
-│ │ ├── bm25_corpus.pkl ← retrieval corpus (committed)
-│ │ └── split_test_flagged.jsonl
-│ └── samples/
-│ └── spotify_sample_100.jsonl
+│   ├── processed/
+│   │   ├── bm25_index.pkl       ← pre-built BM25 index (committed)
+│   │   ├── bm25_corpus.pkl      ← retrieval corpus (committed)
+│   │   └── split_test_flagged.jsonl
+│   └── samples/
+│       └── spotify_sample_100.jsonl
 ├── scripts/
-│ ├── 01_inspect_data.py
-│ ├── 04_build_conversations.py
-│ ├── 05_split_dataset.py
-│ ├── 06_trivial_baseline.py
-│ ├── 07_simple_baseline.py
-│ ├── 08_build_retrieval.py
-│ ├── 09_fix_preprocessing.py
-│ ├── 10_sample_golden_set.py
-│ ├── 11_evaluate_golden_set.py
-│ ├── 12_llm_judge.py
-│ └── demo.py
+│   ├── 01_inspect_data.py       ← dataset inspection
+│   ├── 04_build_conversations.py
+│   ├── 05_split_dataset.py
+│   ├── 06_trivial_baseline.py
+│   ├── 07_simple_baseline.py
+│   ├── 08_build_retrieval.py
+│   ├── 09_fix_preprocessing.py
+│   ├── 10_sample_golden_set.py
+│   ├── 11_evaluate_golden_set.py
+│   ├── 12_llm_judge.py
+│   └── demo.py
 ├── src/
-│ ├── generation/generator.py ← BM25 retrieval + phi3:mini generation
-│ └── policy/escalation.py ← evidence-backed escalation policy
+│   ├── generation/generator.py  ← BM25 retrieval + phi3:mini generation
+│   └── policy/escalation.py    ← evidence-backed escalation policy
 ├── tests/
-│ ├── test_escalation.py ← 7 tests
-│ ├── test_retrieval.py ← 9 tests
-│ └── test_classifier.py ← 4 tests
+│   ├── test_escalation.py       ← 7 tests
+│   ├── test_retrieval.py        ← 9 tests
+│   └── test_classifier.py       ← 4 tests
 └── evaluation/
-├── golden_set/golden_set_labelled.csv
-├── baselines/
-└── reports/
-├── golden_set_summary.json
-├── golden_set_results.jsonl
-└── judge_results.json
-
+    ├── golden_set/golden_set_labelled.csv
+    ├── baselines/
+    └── reports/
+        ├── golden_set_summary.json
+        ├── golden_set_results.jsonl
+        └── judge_results.json
+```
 
 ---
 
@@ -340,7 +342,7 @@ Zero conversation ID overlap confirmed across all splits.
 
 - Intent: accuracy, macro F1, per-class precision/recall/F1
 - Escalation: precision, recall, F1, false auto-handle rate, coverage
-- Response: LLM judge score 1–5 on 30 auto-handled replies
+- Response: LLM judge score 1-5 on 30 auto-handled replies
 
 ---
 
@@ -375,7 +377,7 @@ Zero conversation ID overlap confirmed across all splits.
 
 1. **GENERAL_ENQUIRY at 33.3% F1 drags macro down.** The five operationally important intents average 73.6% F1. Macro weights all classes equally — misleading when one class is a poorly-defined catch-all.
 
-2. **Baseline comparison uses different label systems.** Simple baseline (90%\*) was measured on dev set with keyword pseudo-labels. Final system (66.9%) was measured on golden set with independent labels. Not directly comparable.
+2. **Baseline comparison uses different label systems.** Simple baseline (90%*) was measured on dev set with keyword pseudo-labels. Final system (66.9%) was measured on golden set with independent labels. Not directly comparable.
 
 3. **9.0% false auto-handle = 18 real customers.** Those 18 received bot responses when they needed a human. Business cost unknown.
 
@@ -408,14 +410,14 @@ Zero conversation ID overlap confirmed across all splits.
 - **Source**: Kaggle `thoughtvector/customer-support-on-twitter`
 - **Brand selected**: SpotifyCares
 - **Selection evidence**: Highest clean volume (43,265 brand tweets), 0% duplicate rate, 100% English, tight domain
-- **Total conversations built**: 40,728 customer→brand pairs
+- **Total conversations built**: 40,728 customer-brand pairs
 - **Retrieval corpus**: 18,685 non-deflection train conversations
 
 ---
 
 ## Decision Log
 
-See [`decision_log.md`](decision_log.md) for 10 engineering decisions,
+See [decision_log.md](decision_log.md) for 10 engineering decisions,
 each with alternative considered and evidence for the choice made.
 
 Key decisions:
